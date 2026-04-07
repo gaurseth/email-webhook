@@ -15,6 +15,7 @@
   "dependencies": {
     "@google-cloud/firestore": "^8.3.0",
     "@google-cloud/storage": "^7.19.0",
+    "dotenv": "^17.4.1",
     "express": "^5.2.1",
     "multer": "^2.1.1",
     "punycode": "^2.3.1"

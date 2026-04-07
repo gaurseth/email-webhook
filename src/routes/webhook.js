@@ -9,7 +9,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/webhook/email', upload.any(), verifyMailgun, async (req, res) => {
   try {
-    const fields = req.body;
+    const fields = req.body || {};
     const files = req.files || [];
 
     // Derive a stable ID from Mailgun's Message-Id or fall back to timestamp
