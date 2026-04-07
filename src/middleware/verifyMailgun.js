@@ -7,9 +7,10 @@ function verifyMailgun(req, res, next) {
     return next();
   }
 
-  const timestamp = req.body.timestamp;
-  const token = req.body.token;
-  const signature = req.body.signature;
+  const body = req.body || {};
+  const timestamp = body.timestamp;
+  const token = body.token;
+  const signature = body.signature;
 
   if (!timestamp || !token || !signature) {
     return res.status(401).json({ error: 'Missing signature fields' });
