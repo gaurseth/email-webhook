@@ -3,6 +3,7 @@ const multer = require('multer');
 const verifyMailgun = require('../middleware/verifyMailgun');
 const { uploadEmail } = require('../services/storage');
 const { saveEmailMetadata } = require('../services/firestore');
+const { publishEmailEvent } = require('../services/pubsub');
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -23,6 +24,16 @@ router.post('/webhook/email', upload.any(), verifyMailgun, async (req, res) => {
 
     // Save metadata to Firestore
     await saveEmailMetadata({ messageId, fields, storagePath, attachments });
+
+    // Publish lightweight event to Pub/Sub for downstream processing
+    await publishEmailEvent({
+      messageId,
+      from: fields.sender || fields.from || '',
+      to: fields.recipient || fields.to || '',
+      subject: fields.subject || '',
+      storagePath,
+      attachmentCount: attachments.length,
+    });
 
     console.log(`Stored email ${messageId} → ${storagePath}`);
     res.status(200).json({ status: 'ok', messageId });
